@@ -22,3 +22,71 @@ select,
 textarea {
     max-width: 280px;
 }
+
+/* Dark Mode Toggle Button */
+#darkModeToggle {
+    margin-right: 15px;
+    background-color: transparent;
+    border: 1px solid #ccc;
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    border-radius: 50%;
+}
+
+#darkModeToggle svg {
+    width: 100%;
+    height: 100%;
+    stroke: #555;
+}
+
+/* Dark Mode Styles */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #212529;
+    --navbar-bg-color: #222222;
+    --navbar-text-color: #9d9d9d;
+    --navbar-hover-color: #ffffff;
+    --jumbotron-bg-color: #eeeeee;
+}
+
+body.dark-mode {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --navbar-bg-color: #1e1e1e;
+    --navbar-text-color: #a0a0a0;
+    --navbar-hover-color: #ffffff;
+    --jumbotron-bg-color: #333333;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.navbar-inverse {
+    background-color: var(--navbar-bg-color);
+    border-color: var(--navbar-bg-color);
+}
+
+.navbar-inverse .navbar-nav > li > a {
+    color: var(--navbar-text-color);
+}
+
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-nav > li > a:focus {
+    color: var(--navbar-hover-color);
+}
+
+.navbar-inverse .navbar-brand {
+    color: var(--navbar-text-color);
+}
+
+.jumbotron {
+    background-color: var(--jumbotron-bg-color);
+}
+
+.dark-mode #darkModeToggle svg {
+    stroke: #ddd;
+}
