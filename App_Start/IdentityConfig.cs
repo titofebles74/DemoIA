@@ -18,8 +18,26 @@ namespace Demo
     {
         public Task SendAsync(IdentityMessage message)
         {
-            // Conecte su servicio de correo electrónico aquí para enviar correo electrónico.
-            return Task.FromResult(0);
+            // Plug in your email service here to send an email.
+            var client = new System.Net.Mail.SmtpClient
+            {
+                Host = System.Configuration.ConfigurationManager.AppSettings["SmtpHost"],
+                Port = int.Parse(System.Configuration.ConfigurationManager.AppSettings["SmtpPort"]),
+                EnableSsl = bool.Parse(System.Configuration.ConfigurationManager.AppSettings["SmtpEnableSsl"]),
+                Credentials = new System.Net.NetworkCredential(
+                    System.Configuration.ConfigurationManager.AppSettings["SmtpUsername"],
+                    System.Configuration.ConfigurationManager.AppSettings["SmtpPassword"])
+            };
+
+            var mail = new System.Net.Mail.MailMessage(
+                from: System.Configuration.ConfigurationManager.AppSettings["SmtpFromAddress"],
+                to: message.Destination,
+                subject: message.Subject,
+                body: message.Body
+            );
+            mail.IsBodyHtml = true;
+
+            return client.SendMailAsync(mail);
         }
     }
 
@@ -27,12 +45,12 @@ namespace Demo
     {
         public Task SendAsync(IdentityMessage message)
         {
-            // Conecte el servicio SMS aquí para enviar un mensaje de texto.
+            // Plug in your SMS service here to send a text message.
             return Task.FromResult(0);
         }
     }
 
-    // Configure el administrador de usuarios de aplicación que se usa en esta aplicación. UserManager se define en ASP.NET Identity y se usa en la aplicación.
+    // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
     public class ApplicationUserManager : UserManager<ApplicationUser>
     {
         public ApplicationUserManager(IUserStore<ApplicationUser> store)
@@ -43,14 +61,14 @@ namespace Demo
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context) 
         {
             var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<ApplicationDbContext>()));
-            // Configure la lógica de validación de nombres de usuario
+            // Configure validation logic for usernames
             manager.UserValidator = new UserValidator<ApplicationUser>(manager)
             {
                 AllowOnlyAlphanumericUserNames = false,
                 RequireUniqueEmail = true
             };
 
-            // Configure la lógica de validación de contraseñas
+            // Configure validation logic for passwords
             manager.PasswordValidator = new PasswordValidator
             {
                 RequiredLength = 6,
@@ -60,21 +78,21 @@ namespace Demo
                 RequireUppercase = true,
             };
 
-            // Configurar valores predeterminados para bloqueo de usuario
+            // Configure user lockout defaults
             manager.UserLockoutEnabledByDefault = true;
             manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);
             manager.MaxFailedAccessAttemptsBeforeLockout = 5;
 
-            // Registre proveedores de autenticación en dos fases. Esta aplicación usa los pasos Teléfono y Correo electrónico para recibir un código para comprobar el usuario
-            // Puede escribir su propio proveedor y conectarlo aquí.
-            manager.RegisterTwoFactorProvider("Código telefónico", new PhoneNumberTokenProvider<ApplicationUser>
+            // Register two factor authentication providers. This application uses Phone and Emails as a step of receiving a code for verifying the user
+            // You can write your own provider and plug it in here.
+            manager.RegisterTwoFactorProvider("Phone Code", new PhoneNumberTokenProvider<ApplicationUser>
             {
-                MessageFormat = "Su código de seguridad es {0}"
+                MessageFormat = "Your security code is {0}"
             });
-            manager.RegisterTwoFactorProvider("Código de correo electrónico", new EmailTokenProvider<ApplicationUser>
+            manager.RegisterTwoFactorProvider("Email Code", new EmailTokenProvider<ApplicationUser>
             {
-                Subject = "Código de seguridad",
-                BodyFormat = "Su código de seguridad es {0}"
+                Subject = "Security Code",
+                BodyFormat = "Your security code is {0}"
             });
             manager.EmailService = new EmailService();
             manager.SmsService = new SmsService();
@@ -88,7 +106,7 @@ namespace Demo
         }
     }
 
-    // Configure el administrador de inicios de sesión que se usa en esta aplicación.
+    // Configure the application sign-in manager which is used in this application.
     public class ApplicationSignInManager : SignInManager<ApplicationUser, string>
     {
         public ApplicationSignInManager(ApplicationUserManager userManager, IAuthenticationManager authenticationManager)
