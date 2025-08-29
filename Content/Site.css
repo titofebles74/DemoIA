@@ -1,4 +1,4 @@
-﻿body {
+body {
     padding-top: 50px;
     padding-bottom: 20px;
 }
@@ -48,6 +48,8 @@ textarea {
     --navbar-text-color: #9d9d9d;
     --navbar-hover-color: #ffffff;
     --jumbotron-bg-color: #eeeeee;
+    --link-color: #337ab7;
+    --link-hover-color: #23527c;
 }
 
 body.dark-mode {
@@ -57,34 +59,45 @@ body.dark-mode {
     --navbar-text-color: #a0a0a0;
     --navbar-hover-color: #ffffff;
     --jumbotron-bg-color: #333333;
+    --link-color: #6caddf;
+    --link-hover-color: #8dc6f0;
 }
 
 body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    background-color: var(--bg-color) !important;
+    color: var(--text-color) !important;
     transition: background-color 0.3s, color 0.3s;
 }
 
 .navbar-inverse {
-    background-color: var(--navbar-bg-color);
-    border-color: var(--navbar-bg-color);
+    background-color: var(--navbar-bg-color) !important;
+    border-color: var(--navbar-bg-color) !important;
 }
 
 .navbar-inverse .navbar-nav > li > a {
-    color: var(--navbar-text-color);
+    color: var(--navbar-text-color) !important;
 }
 
 .navbar-inverse .navbar-nav > li > a:hover,
 .navbar-inverse .navbar-nav > li > a:focus {
-    color: var(--navbar-hover-color);
+    color: var(--navbar-hover-color) !important;
 }
 
 .navbar-inverse .navbar-brand {
-    color: var(--navbar-text-color);
+    color: var(--navbar-text-color) !important;
 }
 
 .jumbotron {
-    background-color: var(--jumbotron-bg-color);
+    background-color: var(--jumbotron-bg-color) !important;
+}
+
+a {
+    color: var(--link-color);
+}
+
+a:hover,
+a:focus {
+    color: var(--link-hover-color);
 }
 
 .dark-mode #darkModeToggle svg {
